@@ -1,0 +1,11 @@
+bitmap.c:14:6:initBitmap	0	static
+bitmap.c:18:6:scrollX	4	static
+bitmap.c:25:6:setScrollStepX	0	static
+bitmap.c:30:6:setScrollIntervalX	0	static
+bitmap.c:35:6:setScrollWidth	4	static
+bitmap.c:41:6:setScrollPositionX	4	static
+bitmap.c:47:10:getLineWidth	36	static
+bitmap.c:74:6:calculateScrollWidths	56	static
+bitmap.c:89:6:updateParameters	8	static
+bitmap.c:94:6:writeFrameBuffer	56	static
+bitmap.c:136:6:handleScrolling	12	static

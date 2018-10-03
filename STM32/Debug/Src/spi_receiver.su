@@ -1,0 +1,3 @@
+spi_receiver.c:16:6:setDestinationBuffer	0	static
+spi_receiver.c:26:6:startReceivingFrameSPI	0	static
+spi_receiver.c:46:6:HAL_SPI_RxCpltCallback	0	static

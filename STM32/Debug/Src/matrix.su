@@ -1,0 +1,10 @@
+matrix.c:18:6:setRowData	0	static
+matrix.c:22:6:enableRow	0	static
+matrix.c:26:6:disableRow	0	static
+matrix.c:30:6:setReset	0	static
+matrix.c:34:6:switchFrameBuffer	0	static
+matrix.c:38:10:getActiveFrameBuffer	0	static
+matrix.c:46:10:getInactiveFrameBuffer	0	static
+matrix.c:54:6:startDisplayMultiplex	8	static
+matrix.c:68:6:HAL_SPI_TxCpltCallback	8	static
+matrix.c:75:6:HAL_TIM_PeriodElapsedCallback	16	static

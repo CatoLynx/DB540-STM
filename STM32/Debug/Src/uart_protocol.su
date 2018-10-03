@@ -1,0 +1,3 @@
+uart_protocol.c:21:6:startUartRxRingBuffer	8	static
+uart_protocol.c:90:6:handleCommand	0	static
+uart_protocol.c:52:6:handleUartProtocol	24	static
