@@ -113,6 +113,8 @@ int main(void)
   HAL_Delay(1000);
   memset(frameBuffer1, 0, FB_SIZE);
   memset(frameBuffer2, 0, FB_SIZE);
+  memset(staticData, 0, FB_SIZE);
+  memset(staticMask, 0, FB_SIZE);
   initBitmap();
 
   HAL_GPIO_WritePin(GPIOC, (1 << 13), 1);

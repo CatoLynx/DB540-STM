@@ -38,6 +38,12 @@ void setScrollWidth(uint8_t lineIndex, int16_t width) {
 	parameterUpdatePending = 1;
 }
 
+void setScrollPositionX(uint8_t lineIndex, int16_t position) {
+	if(lineIndex >= NUM_LINES) return;
+	scrollOffsetsX[lineIndex] = position;
+	scrollOffsetsX[lineIndex] %= scrollWidths[lineIndex];
+}
+
 uint16_t getLineWidth(uint8_t lineIndex) {
 	// Returns the rightmost nonzero coordinate of the specified line
 	uint16_t baseByteIndex = lineIndex * MATRIX_HEIGHT * BITMAP_WIDTH_BYTES;
@@ -94,6 +100,7 @@ void writeFrameBuffer(uint8_t* buf) {
 	int16_t baseColIndex, matrixColIndex, bitmapColIndex;
 	uint16_t matrixByteIndex, bitmapByteIndex;
 	uint8_t matrixBitIndex, bitmapBitIndex;
+	uint8_t matrixBitMask;
 	for(matrixRowIndex = 0; matrixRowIndex < MATRIX_HEIGHT; matrixRowIndex++) {
 		for(uint8_t lineIndex = 0; lineIndex < NUM_LINES; lineIndex++) {
 			bitmapRowIndex = lineIndex * MATRIX_HEIGHT + matrixRowIndex;
@@ -105,10 +112,21 @@ void writeFrameBuffer(uint8_t* buf) {
 				matrixBitIndex = matrixColIndex % 8;
 				bitmapByteIndex = bitmapRowIndex * BITMAP_WIDTH_BYTES + bitmapColIndex / 8;
 				bitmapBitIndex = bitmapColIndex % 8;
-				if(BITMAP[bitmapByteIndex] & (1 << (7 - bitmapBitIndex))) {
-					buf[matrixByteIndex] |= (1 << (7 - matrixBitIndex));
+				matrixBitMask = 1 << (7 - matrixBitIndex);
+				if(staticMask[matrixByteIndex] & matrixBitMask) {
+					// If the static mask is set at this pixel, copy data from the static buffer
+					if(staticData[matrixByteIndex] & matrixBitMask) {
+						buf[matrixByteIndex] |= matrixBitMask;
+					} else {
+						buf[matrixByteIndex] &= ~matrixBitMask;
+					}
 				} else {
-					buf[matrixByteIndex] &= ~(1 << (7 - matrixBitIndex));
+					// Otherwise copy data from the bitmap
+					if(BITMAP[bitmapByteIndex] & (1 << (7 - bitmapBitIndex))) {
+						buf[matrixByteIndex] |= matrixBitMask;
+					} else {
+						buf[matrixByteIndex] &= ~matrixBitMask;
+					}
 				}
 			}
 		}

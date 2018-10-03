@@ -8,7 +8,15 @@
 #include <stdint.h>
 #include <string.h>
 #include "bitmap.h"
+#include "spi_receiver.h"
 #include "uart_protocol.h"
+
+static uint8_t uartRxRingBuffer[UART_RX_RING_BUFFER_SIZE];
+static UART_HandleTypeDef *uartRx;
+static uint8_t uartRxRingBufferReadPtr;
+
+static uint8_t currentCommand;
+static uint8_t currentParameters[MAX_PAYLOAD_LENGTH-1];
 
 void startUartRxRingBuffer(UART_HandleTypeDef *huart)
 {
@@ -114,6 +122,20 @@ void handleCommand() {
 			int16_t width = ((uint16_t)currentParameters[1] << 8) | currentParameters[2];
 			if(currentParameters[3] != 0) width *= -1;
 			setScrollWidth(lineIndex, width);
+			break;
+		}
+
+		case CMD_SET_SCROLL_POSITION_X: {
+			uint8_t lineIndex = currentParameters[0];
+			int16_t position = ((int16_t)currentParameters[1] << 8) | currentParameters[2];
+			if(currentParameters[3] != 0) position *= -1;
+			setScrollPositionX(lineIndex, position);
+			break;
+		}
+
+		case CMD_SET_DESTINATION_BUFFER: {
+			uint8_t bufIndex = currentParameters[0];
+			setDestinationBuffer(bufIndex);
 			break;
 		}
 	}

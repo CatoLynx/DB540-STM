@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "matrix.h"
 
-#define BITMAP_WIDTH 3000
+#define BITMAP_WIDTH 3000 // Must be divisible by 8
 #define BITMAP_HEIGHT NUM_LINES * MATRIX_HEIGHT
 #define BITMAP_WIDTH_BYTES BITMAP_WIDTH / 8
 #define BITMAP_SIZE BITMAP_WIDTH * BITMAP_HEIGHT / 8
@@ -19,6 +19,8 @@
 #define MAX_FRAME_COUNTER (uint16_t)-1
 
 uint8_t BITMAP[BITMAP_SIZE];
+uint8_t staticData[FB_SIZE];
+uint8_t staticMask[FB_SIZE];
 int16_t scrollOffsetsX[NUM_LINES];
 int16_t userScrollWidths[NUM_LINES];
 int16_t scrollWidths[NUM_LINES];
@@ -34,6 +36,7 @@ void scrollX(uint8_t, int16_t);
 void setScrollStepX(uint8_t, int16_t);
 void setScrollIntervalX(uint8_t, uint16_t);
 void setScrollWidth(uint8_t, int16_t);
+void setScrollPositionX(uint8_t, int16_t);
 void calculateScrollWidths();
 void updateParameters();
 void writeFrameBuffer(uint8_t*);
