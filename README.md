@@ -1,4 +1,5 @@
 # DB540-STM
+![A picture of the display that this is about displaying the text DB540-STM in large lettering, spanning all five lines.](/Images/IMG_20181003_220326.jpg?raw=true)
 This is an STM32 (and Raspberry Pi) implementation for driving DB540 (and possibly many others) scrolling LED signs.
 I wrote it for my Daktronics (formerly Data Display) DB054005 sign, which has 5 lines of text, each one 240 pixels wide and 7 pixels tall. The hardware is extremely simple, it's basically just a giant chain of shift registers, not even latched, and some transistors to drive the pixel rows. Connector pinouts can be found in the Hardware/ subdirectory.
 
