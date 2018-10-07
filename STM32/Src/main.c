@@ -130,6 +130,7 @@ int main(void)
 		  writeFrameBuffer(getInactiveFrameBuffer());
 		  switchFrameBuffer();
 		  handleScrolling();
+		  handleBlinking();
 		  frameCounter++;
 		  if(frameCounter > MAX_FRAME_COUNTER) frameCounter = 0;
 	  }

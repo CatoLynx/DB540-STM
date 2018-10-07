@@ -21,7 +21,11 @@
 #define CMD_SET_SCROLL_INTERVAL_X	0x12
 #define CMD_SET_SCROLL_WIDTH		0x13
 #define CMD_SET_SCROLL_POSITION_X	0x14
-#define CMD_SET_DESTINATION_BUFFER	0x20 // Set which buffer the next data received via SPI should go to (bitmap, static data or static mask)
+#define CMD_SET_SCROLL_STOP_POS_X	0x15
+#define CMD_SET_BLINK_INTERVAL		0x20
+#define CMD_SET_BLINK_INTERVAL_ON	0x21
+#define CMD_SET_BLINK_INTERVAL_OFF	0x22
+#define CMD_SET_DESTINATION_BUFFER	0x80 // Set which buffer the next data received via SPI should go to (bitmap, static data or static mask)
 
 #define UART_RX_RING_BUFFER_SIZE 128  /* must be power of two */
 #define DMA_WRITE_PTR ( (UART_RX_RING_BUFFER_SIZE - uartRx->hdmarx->Instance->CNDTR) & (UART_RX_RING_BUFFER_SIZE - 1) )

@@ -22,6 +22,8 @@ uint8_t BITMAP[BITMAP_SIZE];
 uint8_t staticData[FB_SIZE];
 uint8_t staticMask[FB_SIZE];
 int16_t scrollOffsetsX[NUM_LINES];
+int16_t scrollStopPositionsX[NUM_LINES];
+uint8_t scrollStopEnabledX[NUM_LINES];
 int16_t userScrollWidths[NUM_LINES];
 int16_t scrollWidths[NUM_LINES];
 uint8_t parameterUpdatePending;
@@ -31,15 +33,25 @@ int16_t scrollStepsX[NUM_LINES];
 uint16_t scrollIntervalsX[NUM_LINES];
 uint16_t lastScrollFrameCountsX[NUM_LINES];
 
+uint16_t blinkIntervalsOn[NUM_LINES];
+uint16_t blinkIntervalsOff[NUM_LINES];
+uint8_t blinkStates[NUM_LINES];
+uint16_t lastBlinkFrameCounts[NUM_LINES];
+
 void initBitmap();
 void scrollX(uint8_t, int16_t);
 void setScrollStepX(uint8_t, int16_t);
 void setScrollIntervalX(uint8_t, uint16_t);
 void setScrollWidth(uint8_t, int16_t);
 void setScrollPositionX(uint8_t, int16_t);
+void setScrollStopPositionX(uint8_t, int16_t);
+void setBlinkInterval(uint8_t, uint16_t);
+void setBlinkIntervalOn(uint8_t, uint16_t);
+void setBlinkIntervalOff(uint8_t, uint16_t);
 void calculateScrollWidths();
 void updateParameters();
 void writeFrameBuffer(uint8_t*);
 void handleScrolling();
+void handleBlinking();
 
 #endif /* BITMAP_H_ */

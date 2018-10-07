@@ -133,6 +133,35 @@ void handleCommand() {
 			break;
 		}
 
+		case CMD_SET_SCROLL_STOP_POS_X: {
+			uint8_t lineIndex = currentParameters[0];
+			int16_t position = ((int16_t)currentParameters[1] << 8) | currentParameters[2];
+			if(currentParameters[3] != 0) position *= -1;
+			setScrollStopPositionX(lineIndex, position);
+			break;
+		}
+
+		case CMD_SET_BLINK_INTERVAL: {
+			uint8_t lineIndex = currentParameters[0];
+			uint16_t interval = ((uint16_t)currentParameters[1] << 8) | currentParameters[2];
+			setBlinkInterval(lineIndex, interval);
+			break;
+		}
+
+		case CMD_SET_BLINK_INTERVAL_ON: {
+			uint8_t lineIndex = currentParameters[0];
+			uint16_t interval = ((uint16_t)currentParameters[1] << 8) | currentParameters[2];
+			setBlinkIntervalOn(lineIndex, interval);
+			break;
+		}
+
+		case CMD_SET_BLINK_INTERVAL_OFF: {
+			uint8_t lineIndex = currentParameters[0];
+			uint16_t interval = ((uint16_t)currentParameters[1] << 8) | currentParameters[2];
+			setBlinkIntervalOff(lineIndex, interval);
+			break;
+		}
+
 		case CMD_SET_DESTINATION_BUFFER: {
 			uint8_t bufIndex = currentParameters[0];
 			setDestinationBuffer(bufIndex);
