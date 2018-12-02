@@ -58,7 +58,7 @@ class Graphics:
         self.draw = ImageDraw.Draw(self.img)
         self.draw.fontmode = '1' # No antialiasing
 
-    def update_parameters(self):
+    '''def update_parameters(self):
         """
         Called manually or after modifications to the internal bitmap have been made,
         but only before the framebuffer is rebuilt.
@@ -117,28 +117,15 @@ class Graphics:
         ]
         img = np.concatenate(line_slices, axis=1)
         fb = np.packbits(img)
-        return fb
+        return fb'''
 
-    def get_framebuffer_new(self):
+    def get_framebuffer(self):
         """
         Get the current display content in the format required for the Display class.
         New version - with scrolling in the controller
         """
-
-        if self.parameter_update_pending:
-            self.update_parameters()
-
-        img = np.array(self.img)
-        fb = np.packbits(img)
-        return fb
-
-    def write_framebuffer(self, output):
-        output[:] = self.get_framebuffer()
-
-    def write_framebuffer_serial(self, port):
-        fb = self.get_framebuffer()
-        port.write(bytes(fb))
-        time.sleep(0.02)
+        
+        return np.packbits(np.array(self.img))
     
     def get_bitmap(self):
         """

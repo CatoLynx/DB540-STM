@@ -19,10 +19,6 @@ def send_bitmap_spi(bitmap):
 
 def main():
     display = Display("/dev/ttyAMA0")
-    for line in range(5):
-        display.set_scroll_step_x(line, 0)
-        display.set_scroll_position_x(line, line*10, 1)
-    return
     graphics = Graphics(NUM_COLS, NUM_ROWS, NUM_LINES, 3000)
     static_graphics = Graphics(NUM_COLS, NUM_ROWS, NUM_LINES, NUM_COLS)
     static_mask = Graphics(NUM_COLS, NUM_ROWS, NUM_LINES, NUM_COLS)
@@ -38,7 +34,7 @@ def main():
     graphics.text("ABER PRINZIPIELL FUNKTIONIERT DAS SCHON GUT", font="Luminator7_Bold", left=0, top=14)
     graphics.text("MAL SCHAUEN, WIE ICH DAS BEHEBE", font="Luminator7_Bold", left=0, top=21)
     graphics.text("LANGER SCROLLTEXT ZUM TESTEN DER AUTOMATISCHEN LAENGENERKENNUNG DER ZEILE ABER DIE FRAGE IST DOCH OB DAS AUCH GEHT WENN DER TEXT ARSCHLANG IST", font="Luminator7_Bold", left=0, top=28)
-
+    """
     static_graphics.text("STATIC TEXT", font="Luminator7_Bold", left=0, top=0)
     static_graphics.text("03.10.2018", font="Luminator7_Bold", halign='right', top=0)
     static_graphics.text("MITTENDRIN!", font="Luminator7_Bold", top=14)
@@ -62,10 +58,10 @@ def main():
     static_mask.line([160, 17, 165, 17])
     static_mask.line([160, 19, 165, 19])
     static_mask.rectangle([0, 21, 20, 34], fill=True)
-
+    """
     fb_scroll = graphics.get_framebuffer_new()
-    fb_static = static_graphics.get_framebuffer()
-    fb_mask = static_mask.get_framebuffer()
+    #fb_static = static_graphics.get_framebuffer()
+    #fb_mask = static_mask.get_framebuffer()
     
     graphics.img.save("out_scroll.png")
     static_graphics.img.save("out_static.png")
@@ -75,8 +71,17 @@ def main():
     
     for line in range(5):
         display.set_scroll_step_x(line, 1)
+        display.set_scroll_interval_x(line, 1)
         display.set_scroll_width(line, 240, 0)
+        #display.set_blink_interval_on(line, 20)
+        #display.set_blink_interval_off(line, 20)
+    """
+    time.sleep(1)
     
+    for line in range(5):
+        display.set_scroll_stop_position_x(line, line*7+4, 1)
+    """
+    """
     display.set_destination_buffer(2)
     time.sleep(0.1)
     send_bitmap_spi(fb_mask)
@@ -88,7 +93,7 @@ def main():
     time.sleep(0.1)
     
     display.set_destination_buffer(0)
-
+    """
 
 if __name__ == "__main__":
     main()
