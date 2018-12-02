@@ -12,6 +12,7 @@ Currently, this software can:
 * Scroll at different speeds per line
 * Scroll in different directions per line
 * Display static graphics in arbitrary patterns overlaid on top of the scrolling layer
+* Auto-scroll if the displayed text exceeds the width of the display
 
 ## What can't it do?
 The software can not currently:

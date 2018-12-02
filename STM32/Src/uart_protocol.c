@@ -141,6 +141,27 @@ void handleCommand() {
 			break;
 		}
 
+		case CMD_SET_AUTO_SCROLL_ENABLED: {
+			uint8_t lineIndex = currentParameters[0];
+			uint8_t enabled = currentParameters[1];
+			setAutoScrollEnabledX(lineIndex, enabled);
+			break;
+		}
+
+		case CMD_SET_AUTO_SCROLL_RESET_ENABLED: {
+			uint8_t lineIndex = currentParameters[0];
+			uint8_t enabled = currentParameters[1];
+			setAutoScrollResetEnabledX(lineIndex, enabled);
+			break;
+		}
+
+		case CMD_SET_SCROLL_ENABLED: {
+			uint8_t lineIndex = currentParameters[0];
+			uint8_t enabled = currentParameters[1];
+			setScrollEnabledX(lineIndex, enabled);
+			break;
+		}
+
 		case CMD_SET_BLINK_INTERVAL: {
 			uint8_t lineIndex = currentParameters[0];
 			uint16_t interval = ((uint16_t)currentParameters[1] << 8) | currentParameters[2];

@@ -46,6 +46,7 @@ void startReceivingFrameSPI() {
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
 	if(hspi -> Instance == SPI2) {
 		HAL_GPIO_TogglePin(GPIOC, (1 << 13));
+		parameterUpdatePending = 1;
 		//switchFrameBuffer();
 	}
 }

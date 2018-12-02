@@ -10,7 +10,7 @@
 #include "bitmap.h"
 #include "util.h"
 
-uint8_t parameterUpdatePending = 1;
+volatile uint8_t parameterUpdatePending = 1;
 uint8_t blinkStates[NUM_LINES] = { 1, 1, 1, 1, 1 };
 
 void initBitmap() {
@@ -48,8 +48,8 @@ void scrollX(uint8_t lineIndex, int16_t amount) {
 	}
 	if(stopScrolling) {
 		scrollOffsetsX[lineIndex] = scrollStopPositionsX[lineIndex];
-		scrollStepsX[lineIndex] = 0;
 		scrollStopEnabledX[lineIndex] = 0;
+		scrollEnabledX[lineIndex] = 0;
 	} else {
 		scrollOffsetsX[lineIndex] = newScrollOffsetX;
 	}
@@ -82,6 +82,33 @@ void setScrollStopPositionX(uint8_t lineIndex, int16_t position) {
 	scrollStopPositionsX[lineIndex] = position;
 	scrollStopEnabledX[lineIndex] = 1;
 	scrollStopPositionsX[lineIndex] = mod(scrollStopPositionsX[lineIndex], scrollWidths[lineIndex]);
+}
+
+void setAutoScrollEnabledX(uint8_t lineIndex, uint8_t enabled) {
+	if(lineIndex >= NUM_LINES) return;
+	if(enabled != 0) {
+		autoScrollEnabledX[lineIndex] = 1;
+	} else {
+		autoScrollEnabledX[lineIndex] = 0;
+	}
+}
+
+void setAutoScrollResetEnabledX(uint8_t lineIndex, uint8_t enabled) {
+	if(lineIndex >= NUM_LINES) return;
+	if(enabled != 0) {
+		autoScrollResetEnabledX[lineIndex] = 1;
+	} else {
+		autoScrollResetEnabledX[lineIndex] = 0;
+	}
+}
+
+void setScrollEnabledX(uint8_t lineIndex, uint8_t enabled) {
+	if(lineIndex >= NUM_LINES) return;
+	if(enabled != 0) {
+		scrollEnabledX[lineIndex] = 1;
+	} else {
+		scrollEnabledX[lineIndex] = 0;
+	}
 }
 
 void setBlinkInterval(uint8_t lineIndex, uint16_t interval) {
@@ -129,23 +156,43 @@ uint16_t getLineWidth(uint8_t lineIndex) {
 	return 0;
 }
 
-void calculateScrollWidths() {
+void calculateScrollParameters() {
 	for(uint8_t lineIndex = 0; lineIndex < NUM_LINES; lineIndex++) {
-		if(userScrollWidths[lineIndex] <= 0) {
-			uint16_t lineWidth = getLineWidth(lineIndex);
-			scrollWidths[lineIndex] = lineWidth + abs(userScrollWidths[lineIndex]);
-		} else {
-			scrollWidths[lineIndex] = userScrollWidths[lineIndex];
+		uint16_t lineWidth = getLineWidth(lineIndex);
+		if(1 || lineWidth != lineWidths[lineIndex]) { // Skip if line width hasn't changed
+			if(userScrollWidths[lineIndex] <= 0) {
+				scrollWidths[lineIndex] = lineWidth + abs(userScrollWidths[lineIndex]);
+			} else {
+				scrollWidths[lineIndex] = userScrollWidths[lineIndex];
+			}
+			if(scrollWidths[lineIndex] < MATRIX_WIDTH) {
+				scrollWidths[lineIndex] = MATRIX_WIDTH;
+			}
+			scrollOffsetsX[lineIndex] %= scrollWidths[lineIndex];
+
+			if(autoScrollEnabledX[lineIndex]) {
+				// This might not make much sense in some scroll width configurations, but for now, this will do.
+				// Makes most sense with relative scroll width.
+				if(lineWidth > MATRIX_WIDTH) {
+					setScrollEnabledX(lineIndex, 1);
+				} else {
+					if(autoScrollResetEnabledX[lineIndex]) {
+						// If auto-scroll reset is enabled, the scroll position will be reset on a new text.
+						// If not, the new text will scroll like the old one and stop at the zero position.
+						scrollOffsetsX[lineIndex] = 0;
+						setScrollEnabledX(lineIndex, 0);
+					} else {
+						setScrollStopPositionX(lineIndex, 0);
+					}
+				}
+			}
 		}
-		if(scrollWidths[lineIndex] < MATRIX_WIDTH) {
-			scrollWidths[lineIndex] = MATRIX_WIDTH;
-		}
-		scrollOffsetsX[lineIndex] %= scrollWidths[lineIndex];
+		lineWidths[lineIndex] = lineWidth;
 	}
 }
 
 void updateParameters() {
-	calculateScrollWidths();
+	calculateScrollParameters();
 	parameterUpdatePending = 0;
 }
 
@@ -198,6 +245,7 @@ void writeFrameBuffer(uint8_t* buf) {
 void handleScrolling() {
 	int32_t counterDiff;
 	for(uint8_t lineIndex = 0; lineIndex < NUM_LINES; lineIndex++) {
+		if(!scrollEnabledX[lineIndex]) continue;
 		if(scrollStepsX[lineIndex] == 0) continue;
 		counterDiff = (int32_t)frameCounter - (int32_t)lastScrollFrameCountsX[lineIndex];
 		if(counterDiff < 0) counterDiff += MAX_FRAME_COUNTER;
