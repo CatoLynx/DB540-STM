@@ -9,6 +9,8 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+from unidecode import unidecode
+
 
 def main():
     display = Display(CONTROL_PORT, spi_channel=SPI_CHANNEL, spi_clock=SPI_CLOCK)
@@ -89,7 +91,7 @@ def main():
                 else:
                     if end_dt.date() != start_dt.date():
                         event_text += "-" + end_dt.strftime("%d.%m.")
-                event_text += " " + event.get('summary').upper()
+                event_text += " " + unidecode(event.get('summary')).upper()
             else:
                 event_text = "KEINE ANSTEHENDEN EREIGNISSE"
             current_calendar_entry += 1
