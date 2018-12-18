@@ -43,7 +43,11 @@ def main():
     last_display_update = 0 # Last display update timestamp
     last_calendar_update = 0 # Last calendar update timestamp
     last_calendar_entry_cycle = 0 # Timestamp when the displayed calendar entry last changed
-    current_calendar_entry = 0 # Which of the upcoming calendar entries is currently being displayed
+    current_calendar_entry_page = 0 # Which of the upcoming calendar entries are currently being displayed
+    calendar_entries_per_page = 4 # How many lines of calendar entries to show
+    event_texts = []
+    displayed_event_texts = []
+    
     while True:
         now = time.time()
         
@@ -52,16 +56,11 @@ def main():
             # Call the Google Calendar API
             dt_now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
             events_result = service.events().list(calendarId='primary', timeMin=dt_now,
-                                                maxResults=5, singleEvents=True,
+                                                maxResults=12, singleEvents=True,
                                                 orderBy='startTime').execute()
             calendar_events = events_result.get('items', [])
-    
-        if now - last_calendar_entry_cycle > 5:
-            last_calendar_entry_cycle = now
-            current_calendar_entry %= len(calendar_events)
-            if calendar_events:
-                event = calendar_events[current_calendar_entry]
-                
+            
+            for event in calendar_events:
                 event_start = event.get('start')
                 has_start_time = 'dateTime' in event_start
                 if has_start_time:
@@ -92,9 +91,15 @@ def main():
                     if end_dt.date() != start_dt.date():
                         event_text += "-" + end_dt.strftime("%d.%m.")
                 event_text += " " + unidecode(event.get('summary')).upper()
-            else:
-                event_text = "KEINE ANSTEHENDEN EREIGNISSE"
-            current_calendar_entry += 1
+                event_texts.append(event_text)
+    
+        if now - last_calendar_entry_cycle > 5:
+            current_calendar_entry_page += 1
+            if ((current_calendar_entry_page + 1) * calendar_entries_per_page) - len(event_texts) >= calendar_entries_per_page:
+                current_calendar_entry_page = 0
+            last_calendar_entry_cycle = now
+            base_index = current_calendar_entry_page * calendar_entries_per_page
+            displayed_event_texts = event_texts[base_index:base_index + calendar_entries_per_page]
         
         if now - last_display_update > 1:
             last_display_update = now
@@ -102,7 +107,8 @@ def main():
             graphics.text("%H:%M:%S", halign='left', valign='top', font="Luminator7_Bold", timestring=True)
             graphics.text("INFOSCREEN", halign='center', valign='top', font="Luminator7_Bold")
             graphics.text("%d.%m.%Y", halign='right', valign='top', font="Luminator7_Bold", timestring=True)
-            graphics.text(event_text, halign='left', top=7, font="Luminator7_Bold")
+            for i, event_text in enumerate(displayed_event_texts):
+                graphics.text(event_text, halign='left', top=7 * (i + 1), font="Luminator7_Bold")
             display.send_graphics(graphics)
 
 
